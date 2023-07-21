@@ -35,6 +35,15 @@ def main_query_f(input_time1,input_time2) ->bool:
     :type input_time1: int type
     :param input_time2: a numeric value
     :type input_time2: int type
+
+    1. It takes two arguments i.e. the start and end time between which we want the data.
+    2. It takes all the CSV file one by one from the EOL-dump folder and read that file as a pandas data frame
+    3. Now the function filters the data frame and takes data only within the limits of time.
+    4. Now we are good to get some of the values from this filtered data frame like License plate number, Distance, Average Speed, Number of Speed Violations
+    and if the data frame would be empty then we continue to check for other vehicles' data.
+    5. Similarly now the function filters the Trip-Info.csv data frame within the limits given by the user and takes the values Number of Trips Completed and Transporter Name from the data frame
+    6. Now to use the solution as an API I used Flask and the Flask can be run with the function app.py
+
     """
 
     time1 = datetime.fromtimestamp(input_time1)
@@ -48,14 +57,14 @@ def main_query_f(input_time1,input_time2) ->bool:
     for vehicle in vehicles:
         print('Vehicle ',i)
         i+=1
-        raw_df=pd.read_csv(f'EOL-dump/{vehicle}',index_col=0)
+        raw_df=pd.read_csv(f'EOL-dump/{vehicle}',index_col=0,dtype={'lat':float,'lname':str,'lon':float})
         filterd_df=raw_df.query(f'tis >{input_time1} and tis<{input_time2}')
         if filterd_df.count()[0]==0:
             continue # if No Data found
         license_plate_no=filterd_df['lic_plate_no'].to_list()[0]
         avg_speed=filterd_df['spd'].dropna().describe()['mean'] #droping null values
         n_over_speed=filterd_df.query('osf==True').count()[0]
-        filterd_df=filterd_df.sort_values('tis',ignore_index=True)
+        filterd_df=filterd_df.sort_values('tis',ignore_index=True) # sorting by time in asc order to calculate distance
         distances=[]
         lat1=filterd_df['lat'][0]
         lon1=filterd_df['lon'][0]
