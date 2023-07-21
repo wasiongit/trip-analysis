@@ -1,0 +1,25 @@
+<html>
+  <body>
+    <a href="/static/output.xlsx">Download Excel</a>
+    <div>
+      <table border="1">
+    <thead>
+        <tr>
+            {% for col in colnames %}
+            <th>{{ col }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for record in records %}
+        <tr>
+            {% for col in colnames %}
+            <td>{{ record[col] }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </div>
+  </body>
+</html>
